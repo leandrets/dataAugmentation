@@ -1,5 +1,6 @@
 import pika
 import json
+from extractor import Extractor
 
 class JSONdataSender:
     def __init__(self):
@@ -27,7 +28,7 @@ class JSONdataSender:
         self.connection.close()
         
 
-class testReceiver:
+class Receiver:
     counter = 0
     
     def __init__(self, name):
@@ -36,8 +37,9 @@ class testReceiver:
         self.queueName = name
         
     def callback(self, ch, method, properties, body):
-        print("Received ", body)
+        #print("Received ", body)
         self.counter += 1
+        self.extractor.extract(body)
         
     def startConsumation(self):
         self.channel.queue_declare(queue=self.queueName)
@@ -54,6 +56,9 @@ class testReceiver:
         self.channel.stop_consuming()
         self.connection.close()
         print("Total items received: ", self.counter)
+        
+    def connect(self, extr):
+        self.extractor = extr
     
 
 class CustomException(Exception):
@@ -63,5 +68,8 @@ sender = JSONdataSender()
 quantity = sender.setData("ref/payload.json")
 sender.sendData("messageQueue")
 
-receiver = testReceiver("messageQueue")
+extr = Extractor()
+
+receiver = Receiver("messageQueue")
+receiver.connect(extr)
 receiver.startConsumation()
