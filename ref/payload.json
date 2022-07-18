@@ -1,5 +1,4 @@
-[
-    {
+[   {
         "video_ref": "video_2.mp4",
         "frame_seconds_index": 1,
         "op_type": "random_rotation"
