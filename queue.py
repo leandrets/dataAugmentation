@@ -3,6 +3,8 @@ import json
 from extractor import Extractor
 
 class JSONdataSender:
+    
+    # Sets connection and channel
     def __init__(self):
         credentials = pika.PlainCredentials("guest", "guest")
         self.connection = pika.BlockingConnection(
@@ -14,11 +16,13 @@ class JSONdataSender:
         )   
         self.channel = self.connection.channel()
 
+    # Reads data from JSON file and stores it, returns amount of messages in the file
     def setData(self, path):
         file =  open(path, 'r')
         self.data = json.load(file)
         return len(self.data)
         
+    # Sends stored data to queue
     def sendData(self, queueName):
         self.channel.queue_declare(queue=queueName)
         for item in self.data:
@@ -28,19 +32,22 @@ class JSONdataSender:
         self.connection.close()
         
 
-class Receiver:
+class Consumer:
     counter = 0
     
+    #  Sets connection and channel
     def __init__(self, name):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         self.channel = self.connection.channel()
         self.queueName = name
         
+    # Called everytime a message is received - redirects body of message to frame extractor
     def callback(self, ch, method, properties, body):
         #print("Received ", body)
         self.counter += 1
         self.extractor.extract(body)
         
+    # Starts consumation of messages
     def startConsumation(self):
         self.channel.queue_declare(queue=self.queueName)
         self.channel.basic_consume(queue=self.queueName,
@@ -52,24 +59,13 @@ class Receiver:
         except KeyboardInterrupt:
             self.stopConsumation()
         
+    # Stops consumation of messages
     def stopConsumation(self):
         self.channel.stop_consuming()
         self.connection.close()
         print("Total items received: ", self.counter)
         
+    # Builds connection with a frame extractor
     def connect(self, extr):
         self.extractor = extr
     
-
-class CustomException(Exception):
-    pass
-
-sender = JSONdataSender()
-quantity = sender.setData("ref/payload.json")
-sender.sendData("messageQueue")
-
-extr = Extractor()
-
-receiver = Receiver("messageQueue")
-receiver.connect(extr)
-receiver.startConsumation()
