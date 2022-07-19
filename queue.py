@@ -43,7 +43,7 @@ class Consumer:
         
     # Called everytime a message is received - redirects body of message to frame extractor
     def callback(self, ch, method, properties, body):
-        #print("Received ", body)
+        print(f"\n-----------------------------------------------------\n{self.counter}: Received ", body)
         self.counter += 1
         self.extractor.extract(body)
         
@@ -63,7 +63,7 @@ class Consumer:
     def stopConsumation(self):
         self.channel.stop_consuming()
         self.connection.close()
-        print("Total items received: ", self.counter)
+        print("\n\n-----------------------------------------------------\nTotal items received: ", self.counter)
         
     # Builds connection with a frame extractor
     def connect(self, extr):
