@@ -58,25 +58,17 @@ class Extractor:
         
     # Sends image to operator, asking the proper operation
     def requireOperation(self, image, op):
-        operations = 0
-        if "random_rotation" in op:
-            image, angle = self.operator.randomRotation(image)
-            print(f"            {self.n}: Successfully rotated {angle} degrees")
-            operations +=1
-        if "flip" in op:
-            image = self.operator.flip(image)
-            print(f"            {self.n}: Successfully flipped")
-            operations += 1
-        if "noise" in op:
-            image = self.operator.noise(image)
-            print(f"            {self.n}: Successfully applied noise filter")
-            operations += 1
         if "grayscale" in op:
             image = self.operator.grayscale(image)
             print(f"            {self.n}: Successfully converted to grayscale")
-            operations += 1
-        if operations == 0:
-            print(f"                {self.n}: No operation made")
-        else:
-            cv.imwrite("ref/results/frame%d.jpg" % self.n, image)
-            print(f"                {self.n}: Saved operated frame")
+        if "flip" in op:
+            image = self.operator.flip(image)
+            print(f"            {self.n}: Successfully flipped")
+        if "noise" in op:
+            image = self.operator.noise(image)
+            print(f"            {self.n}: Successfully applied noise filter")
+        if "random_rotation" in op:
+            image, angle = self.operator.randomRotation(image)
+            print(f"            {self.n}: Successfully rotated {angle} degrees")
+        cv.imwrite("ref/results/frame%d.jpg" % self.n, image)
+        print(f"                {self.n}: Saved operated frame")

@@ -1,6 +1,0 @@
-# Como faço pra interromper o consumidor? Alem do Keyboard Interrupt
-    Filas do rabbit: são limpas depois que a conexão é interrompida?
-
-# Qual exatamente a função do consumidor? pq nao envia as mensagens diretamente pro extrator de frame?
-    É pra processar uma mensagem de cada vez? Toda vez que "recebe" a mensagem sai da fila?
-

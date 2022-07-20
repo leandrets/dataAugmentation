@@ -1,23 +1,31 @@
 import random
+import numpy as np
 import cv2 as cv
 
 class Operator:
     
     def randomRotation(self, image):
-        rows, cols, n = image.shape
+        shape = image.shape
+        rows = shape[0]
+        cols = shape[1]
         angle = random.random() * 180
         matrix = cv.getRotationMatrix2D(((cols-1)/2, (rows-1)/2), angle, 1)
         result = cv.warpAffine(image, matrix, (cols, rows))
         return result, angle
         
     def flip(self, image):
-        result = cv.flip(image, 0)
-        return result
+        return cv.flip(image, 0)
 
     def noise(self, image):
-        return image
+        shape = image.shape
+        mean = 0
+        sigma = 75
+        gaussian = np.random.normal(mean, sigma, shape)
+        gaussian = gaussian.reshape(shape)
+        result = image + gaussian
+        return result
     
     def grayscale(self, image):
-        result = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        return result
+        return cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+         
     
