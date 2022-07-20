@@ -1,6 +1,14 @@
-FROM ubuntu:20.04
-RUN sudo apt-get install git python3 python3-opencv
-RUN pip3 install numpy
-RUN git clone https://gitlab.com/activities1/backvisao.git
-RUN cd backvisao
-RUN python3 main.py > output.log
+FROM python:3
+
+RUN apt-get update
+RUN pip3 install --upgrade pip
+RUN pip3 install numpy 
+RUN apt-get -y install ffmpeg python3-opencv
+
+COPY . .
+
+WORKDIR /src
+
+CMD python3 main.py > ../output/output.log
+
+EXPOSE 5672
